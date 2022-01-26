@@ -2,15 +2,15 @@
 
 import Vue from 'vue';
 import axios from "axios";
-
+import store from '@/store'
 // Full config:  https://github.com/axios/axios#request-config
-axios.defaults.baseURL = process.env.VUE_APP_URL || process.env.apiUrl || '';
+// axios.defaults.baseURL = process.env.VUE_APP_URL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
+  baseURL: process.env.VUE_APP_API_URL,
+  timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
 
@@ -19,10 +19,14 @@ const _axios = axios.create(config);
 _axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
+    if(store.state.token){
+      config.headers['token'] = store.state.token;
+    }
     return config;
   },
   function(error) {
     // Do something with request error
+    console.log(error)
     return Promise.reject(error);
   }
 );
